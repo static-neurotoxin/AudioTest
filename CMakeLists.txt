@@ -1,0 +1,17 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.6)
+SET(PROJECTNAME audiotest)
+PROJECT(${PROJECTNAME})
+
+INCLUDE(CMakeToolsHelpers OPTIONAL)
+
+SET(SOURCES
+        AudioWriter.cpp
+        main.cpp
+        )
+
+SET(HEADERS
+        AudioWriter.h
+        AudioGenerator.h)
+
+ADD_EXECUTABLE(${PROJECTNAME} ${SOURCES} ${HEADERS})
+SET_PROPERTY(TARGET ${PROJECTNAME} PROPERTY CXX_STANDARD 14)
