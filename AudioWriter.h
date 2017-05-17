@@ -9,22 +9,26 @@
 #include <ios>
 #include <iostream>
 #include <list>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 #include "AudioGenerator.h"
 
 class AudioWriter
 {
 public:
-    AudioWriter(const std::string &filename) : m_filename(filename) {}
+    AudioWriter(const boost::filesystem::path &filename) : m_filename(filename) {}
     AudioWriter() = delete;
     AudioWriter(const AudioWriter &) = delete;
 
-    inline virtual std::ios_base::openmode getMode() {return std::ios_base::out | std::ios_base::trunc;}
+    inline virtual std::ios_base::openmode getMode()
+    {
+        return std::ios_base::out | std::ios_base::trunc;
+    }
 
-    virtual void writeHeader(const AudioGenerator &audio, unsigned int sampleRate) = 0;
-    virtual void writeData(const AudioGenerator &audio, unsigned int sampleRate) = 0;
+    virtual void writeHeader (const AudioGenerator &audio, unsigned int sampleRate) = 0;
+    virtual void writeData   (const AudioGenerator &audio, unsigned int sampleRate) = 0;
     virtual void writeTrailer(const AudioGenerator &audio, unsigned int sampleRate) = 0;
-
     inline virtual void write(const AudioGenerator &audio, unsigned int sampleRate)
     {
         m_file.open(m_filename, getMode());
@@ -38,32 +42,35 @@ public:
 
     // Accessors
 protected:
-    inline const std::string &getFilename() const {return m_filename;}
-    inline std::ofstream &getFile() {return m_file;}
+    inline const boost::filesystem::path &getFilename() const {return m_filename;}
+    inline boost::filesystem::ofstream   &getFile()           {return m_file;}
 
 private:
-    std::string     m_filename;
-    std::ofstream   m_file;
+    boost::filesystem::path     m_filename;
+    boost::filesystem::ofstream m_file;
 };
 
 class SoxDatWriter : public AudioWriter
 {
 public:
-    SoxDatWriter(const std::string &filename) : AudioWriter(filename) {}
+    SoxDatWriter(const boost::filesystem::path &filename) : AudioWriter(filename) {}
 
-    virtual void writeHeader(const AudioGenerator &audio, unsigned int sampleRate);
-    virtual void writeData(const AudioGenerator &audio, unsigned int sampleRate);
+    virtual void writeHeader        (const AudioGenerator &audio, unsigned int sampleRate);
+    virtual void writeData          (const AudioGenerator &audio, unsigned int sampleRate);
     inline virtual void writeTrailer(const AudioGenerator &audio, unsigned int sampleRate) {}
 };
 
 class WaveWriter : public AudioWriter
 {
 public:
-    WaveWriter(const std::string &filename, bool pcm = false) : AudioWriter(filename), m_pcm(pcm) {}
-    inline virtual std::ios_base::openmode getMode() {return std::ios_base::out | std::ios_base::trunc | std::ios_base::binary;}
+    WaveWriter(const boost::filesystem::path &filename, bool pcm = false) : AudioWriter(filename), m_pcm(pcm) {}
+    inline virtual std::ios_base::openmode getMode()
+    {
+        return std::ios_base::out | std::ios_base::trunc | std::ios_base::binary;
+    }
 
-    virtual void writeHeader(const AudioGenerator &audio, unsigned int sampleRate);
-    virtual void writeData(const AudioGenerator &audio, unsigned int sampleRate);
+    virtual void writeHeader        (const AudioGenerator &audio, unsigned int sampleRate);
+    virtual void writeData          (const AudioGenerator &audio, unsigned int sampleRate);
     inline virtual void writeTrailer(const AudioGenerator &audio, unsigned int sampleRate) {}
 
 protected:
