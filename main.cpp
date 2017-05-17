@@ -10,7 +10,7 @@ int main(int argc, const char *argv[])
 
     std::function<double(double)> func = [](double arg) -> double { return std::sin(arg); };
 
-    PeriodicGenerator sine(squareWave);
+    PeriodicGenerator sine(func);
     sine.setDuration(1);
     sine.setdBFS(-10);
     sine.setFrequency(1000);
@@ -18,6 +18,9 @@ int main(int argc, const char *argv[])
 
     SoxDatWriter writer("test.dat");
     writer.write(sine, 8000);
+
+    WaveWriter wWriter("test.wav", false);
+    wWriter.write(sine, 8000);
 
     return 0;
 }

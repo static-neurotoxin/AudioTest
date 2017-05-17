@@ -66,9 +66,9 @@ void WaveWriter::writeHeader(const AudioGenerator &audio, unsigned int sampleRat
 
     // Assumes mono signal
     WriteFourCC("RIFF");                        // Magic number
-    WriteInt32(samples * sampleSize + 44);      // File size
+    WriteInt32(samples * sampleSize + 40);      // File size
     WriteFourCC("WAVE");                        // File type
-    WriteFourCC("fmt");                         // fmt chunk
+    WriteFourCC("fmt ");                         // fmt chunk
     WriteInt32(16);                             // Format header size
     WriteInt16(m_pcm ? 1 : 3);                  // Audio format (1 = PCM, 3 = 32 bit float)
     WriteInt16(1);                              // Channels
